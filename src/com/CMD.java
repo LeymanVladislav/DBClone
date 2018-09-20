@@ -16,9 +16,10 @@ public class CMD {
         //String Url = DBDriver + ":@" + TNSName;
 
 
+        // Загрузка конфигурационных параметров
         Proportion.GetProporties();
 
-        ExecuteDBScript("DBSCRIPTS\\test.sql");
+        ExecuteDBScript(Proportion.PathAddDir + "DBSCRIPTS\\test.sql");
 
         //connect(Proportion.Host,Proportion.Port,Proportion.DBName,Proportion.User,Proportion.Pass);
         //Url = DBDriver + ":@" + Host + ":" + Port + ":" + DBName;
@@ -52,4 +53,5 @@ public class CMD {
         String Command = "sqlplus " + Proportion.User + "/" + Proportion.Pass + "@" + Proportion.TNSName + " @" + FileName;
         ExecuteCMD(Command);
     }
+
 }

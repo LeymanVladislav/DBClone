@@ -21,14 +21,28 @@ public class Proportion
     public static String Pass;
     public static String Schemas;
 
+    public static String PathAddDir;
+    public static String PathForIdea = "src/";
+    public static String PathConfig = "config/config.ini";
+
+    public static String[] Arr_Schemas;
+
+    private static boolean isIdea = true; //Если 1, то запуск для idea, т.е. к пути прибавляется src/, после компиляции он не нужен
+
     public static void main(String[] args) throws IOException {
         GetProporties();
     }
 
     public static void GetProporties() throws IOException
     {
+
+        if(isIdea){
+            PathAddDir = PathForIdea;
+        }
+
         Properties props = new Properties();
-        props.load(new FileInputStream(new File("src/config/example.ini")));
+
+        props.load(new FileInputStream(new File(PathAddDir + PathConfig)));
 
         if(!props.isEmpty()) {
             SOME_INT_VALUE = Integer.valueOf(props.getProperty("SOME_INT_VALUE", "1"));
@@ -46,7 +60,8 @@ public class Proportion
             // Читаем список через точку с запятой
             Schemas = props.getProperty("SCHEMAS");
             if((Schemas != null)&&(Schemas != "")) {
-                String[] Arr_Schemas = Schemas.split(";");
+                Arr_Schemas = Schemas.split(";");
+                System.out.println("Load schemas:");
                 for (int i = 0; i < Arr_Schemas.length; ++i) {
                     System.out.println(Arr_Schemas[i]);
                 }
