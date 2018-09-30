@@ -1,12 +1,14 @@
 package db.oracle;
 
-import java.io.*;
-import java.sql.*;
-import java.util.Scanner;
-
+import com.CMD;
 import com.Proportion;
 import oracle.jdbc.OracleDriver;
 import oracle.jdbc.OracleTypes;
+
+import java.io.*;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class DBConnection {
 
@@ -23,6 +25,11 @@ public class DBConnection {
     //private static String url = DBDriver + "://" + Host + ":" + Port + "/" + DBName + "?" + SSLMode;
     String Url = DBDriver + ":@" + Host + ":" + Port + ":" + DBName;
 
+    public static class UserObjectType {
+        public String ObjectName;
+        public String ObjectType;
+    }
+
 
     public static void main(String[] argv) throws Exception {
 
@@ -35,11 +42,37 @@ public class DBConnection {
 
         connect(User,Pass);
 
-        ExecuteSqlExample(connection);
+        //ExecuteSqlExample(connection);
 
-        ExecutePlSqlBlockExample(connection);
+        //ExecutePlSqlBlockExample(connection);
 
-        importSQL(connection, new File(Proportion.PathAddDir + "DBScripts/test.sql"));
+        //importSQL(connection, new File(Proportion.PathAddDir + "DBScripts/test.sql"));
+
+        /*for (int i = 0; i < Proportion.ArrSchemas.length; ++i) {
+            //CMD.ExecuteDBScript(Proportion.ArrSchemas[i], Proportion.ArrSchemasPass[i], TNSName,Proportion.PathAddDir + "DBScripts/test.sql", Proportion.ArrSchemas[i]);
+            CMD.ExecuteDBScript(Proportion.ArrSchemas[i], Proportion.ArrSchemasPass[i], TNSName,Proportion.PathAddDir + "DBScripts/user_tables.sql");
+        }*/
+
+        // Получаем список объектов пользователя
+        ArrayList<UserObjectType> UserObjectList;
+        UserObjectList = GetUserObjects(connection,Proportion.ObjectsType,Proportion.PathAddDir + "DBScripts/user_objects.sql");
+        for (int i = 0; i < UserObjectList.size(); i++) {
+            System.out.println(UserObjectList.get(i).ObjectName + " " + UserObjectList.get(i).ObjectType);
+        }
+
+       /* Reader reader = new InputStreamReader(new FileInputStream(Proportion.PathAddDir + "DBScripts/test.sql"));
+
+        ScriptRunner SR = new ScriptRunner(connection,false,true);
+
+        try {
+            SR.runScript(reader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        */
+
 
     }
 
@@ -80,6 +113,39 @@ public class DBConnection {
         } else {
             System.out.println("Failed to make connection!");
         }
+    }
+
+    // Получение списка объектов пользователя
+    public static ArrayList<UserObjectType> GetUserObjects(Connection Connect, String ObjectsType, String File) throws Exception {
+
+        java.sql.Array ObjTypsArr;
+
+        // Получение текста файла
+        String FileTxt = CMD.GetFileTxt(File);
+
+        //ObjTypsArr = Connect.createArrayOf("CHAR", ArrObjectsType);
+        System.out.println("ObjectsType = " + ObjectsType);
+
+        ArrayList<UserObjectType> UserObjectList = new ArrayList<>();
+
+        CallableStatement cs = Connect.prepareCall(FileTxt);
+        //cs.setArray(1, ObjTypsArr);
+        cs.setString(1, ObjectsType);
+        cs.registerOutParameter(2, OracleTypes.CURSOR);
+
+        cs.execute();
+
+        //System.out.println("Result = " + cs.getObject(2));
+
+        ResultSet cursorResultSet = (ResultSet) cs.getObject(2);
+        while (cursorResultSet.next()) {
+            UserObjectType UserObject = new UserObjectType();
+            UserObject.ObjectName = cursorResultSet.getString("OBJECT_NAME");
+            UserObject.ObjectType = cursorResultSet.getString("OBJECT_TYPE");
+            UserObjectList.add(UserObject);
+        }
+        cs.close();
+        return UserObjectList;
     }
 
     // Функция выполнения sql запроса

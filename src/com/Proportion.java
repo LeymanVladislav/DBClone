@@ -20,13 +20,16 @@ public class Proportion
     public static String User;
     public static String Pass;
     public static String Schemas;
+    public static String SchemasPass;
+    public static String ObjectsType;
+
 
     public static String PathAddDir;
     public static String PathForIdea = "src/";
     public static String PathConfig = "config/config.ini";
 
-    public static String[] Arr_Schemas;
-
+    public static String[] ArrSchemas;
+    public static String[] ArrSchemasPass;
     private static boolean isIdea = true; //Если 1, то запуск для idea, т.е. к пути прибавляется src/, после компиляции он не нужен
 
     public static void main(String[] args) throws IOException {
@@ -56,17 +59,26 @@ public class Proportion
             TNSName = props.getProperty("TNS_NAME");
             User = props.getProperty("UER");
             Pass = props.getProperty("PASS");
+            ObjectsType = props.getProperty("OBJECTS_TYPE");
 
             // Читаем список через точку с запятой
             Schemas = props.getProperty("SCHEMAS");
             if((Schemas != null)&&(Schemas != "")) {
-                Arr_Schemas = Schemas.split(";");
+                ArrSchemas = Schemas.split(";");
                 System.out.println("Load schemas:");
-                for (int i = 0; i < Arr_Schemas.length; ++i) {
-                    System.out.println(Arr_Schemas[i]);
+                for (int i = 0; i < ArrSchemas.length; ++i) {
+                    System.out.println(ArrSchemas[i]);
                 }
             }
-
+            // Читаем список через точку с запятой
+            SchemasPass = props.getProperty("SCHEMAS_PASS");
+            if((SchemasPass != null)&&(SchemasPass != "")) {
+                ArrSchemasPass = SchemasPass.split(";");
+                System.out.println("Load schemas:");
+                for (int i = 0; i < ArrSchemasPass.length; ++i) {
+                    System.out.println(ArrSchemasPass[i]);
+                }
+            }
         }
     }
 
