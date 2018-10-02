@@ -1,0 +1,3 @@
+begin
+  execute immediate ?;
+end;

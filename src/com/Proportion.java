@@ -13,12 +13,19 @@ public class Proportion
     private static double SOME_DOUBLE_VALUE;
     private static String parts;
 
-    public static String Host;
-    public static String Port;
-    public static String DBName;
-    public static String TNSName;
-    public static String User;
-    public static String Pass;
+    public static String S_Host;
+    public static String S_Port;
+    public static String S_DBName;
+    public static String S_TNSName;
+
+    public static String D_Host;
+    public static String D_Port;
+    public static String D_DBName;
+    public static String D_TNSName;
+    public static String D_UserDBA;
+    public static String D_PassDBA;
+
+
     public static String Schemas;
     public static String SchemasPass;
     public static String ObjectsType;
@@ -48,17 +55,25 @@ public class Proportion
         props.load(new FileInputStream(new File(PathAddDir + PathConfig)));
 
         if(!props.isEmpty()) {
+            //[Example]
             SOME_INT_VALUE = Integer.valueOf(props.getProperty("SOME_INT_VALUE", "1"));
             SOME_STRING_VALUE = props.getProperty("SOME_STRING_VALUE");
             SOME_DOUBLE_VALUE = Double.valueOf(props.getProperty("SOME_DOUBLE_VALUE", "1.0"));
 
+            //[DB_SOURCE]
+            S_Host = props.getProperty("S_HOST");
+            S_Port = props.getProperty("S_PORT");
+            S_DBName = props.getProperty("S_DB_NAME");
+            S_TNSName = props.getProperty("S_TNS_NAME");
 
-            Host = props.getProperty("HOST");
-            Port = props.getProperty("PORT");
-            DBName = props.getProperty("DB_NAME");
-            TNSName = props.getProperty("TNS_NAME");
-            User = props.getProperty("UER");
-            Pass = props.getProperty("PASS");
+            //[DB_DESTINATION]
+            D_Host = props.getProperty("D_HOST");
+            D_Port = props.getProperty("D_PORT");
+            D_DBName = props.getProperty("D_DB_NAME");
+            D_TNSName = props.getProperty("D_TNS_NAME");
+            D_UserDBA = props.getProperty("D_USER_DBA");
+            D_PassDBA = props.getProperty("D_PASS_DBA");
+
             ObjectsType = props.getProperty("OBJECTS_TYPE");
 
             // Читаем список через точку с запятой

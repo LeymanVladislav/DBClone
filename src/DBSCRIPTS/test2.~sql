@@ -1,0 +1,6 @@
+declare
+ res clob;
+begin
+  res := dbms_metadata.get_ddl(object_type => 'SEQUENCE',name => 'CUR_RATES_CB_ID_SEQ');
+  :res_str := to_char(res);  
+end;
