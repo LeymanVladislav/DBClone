@@ -54,11 +54,12 @@ public class DBUTL {
         ArrayList<UserObjectType> UserObjectList = null;
         for (int i = 0; i < Proportion.ArrSchemas.length; ++i) {
 
-            // Устанавливаем соединение с базой источником
+            System.out.println("\n============== Устанавливаем соединение с базой источником ==============\n");
+
             Connection s_connection;
             s_connection = connect(Proportion.S_Host, Proportion.S_Port, Proportion.S_DBName, Proportion.ArrSchemas[i], Proportion.ArrSchemasPass[i]);
 
-            // Получаем список объкетов схемы
+            System.out.println("\n============== Получаем список объкетов схемы " + Proportion.ArrSchemas[i] + " ==============\n");
             UserObjectList = GetUserObjects(s_connection, Proportion.ObjectsType);
 
             for (int j = 0; j < UserObjectList.size(); j++) {
@@ -81,33 +82,35 @@ public class DBUTL {
             Connection d_connection_dba;
             d_connection_dba = connect(Proportion.D_Host, Proportion.D_Port, Proportion.D_DBName, Proportion.D_UserDBA, Proportion.D_PassDBA);
 
-            for (int j = UserObjectList.size() - 1; j > 0; j--) {
+            for (int j = UserObjectList.size() - 1; j >= 0; j--) {
                 System.out.println("Object Name:" + UserObjectList.get(j).Name);
                 System.out.println("Object Type:" + UserObjectList.get(j).Type);
-                DropObjects(d_connection_dba, UserObjectList.get(j).Name, UserObjectList.get(j).Type);
+                DropObjects(d_connection_dba, Proportion.ArrSchemas[i], UserObjectList.get(j).Name, UserObjectList.get(j).Type);
                 System.out.println("\n-----------------------------------------------------------------------------\n");
             }
             d_connection_dba.close();
+/*
+            System.out.println("\n============== Запись файла инсталятора для схемы " + Proportion.ArrSchemas[i] + " ==============");
+            //System.out.println("\n============== Установка объектов базы источника в базу назначения ==============");
 
-            System.out.println("\n============== Установка объектов базы источника в базу назначения ==============");
-
-            System.out.println("\n============== Устанавливаем соединение с базой назначения под схемой " + Proportion.ArrSchemas[i] + " ==============\n");
-            Connection d_connection;
-            d_connection = connect(Proportion.D_Host, Proportion.D_Port, Proportion.D_DBName, Proportion.ArrSchemas[i], Proportion.ArrSchemasPass[i]);
+            //System.out.println("\n============== Устанавливаем соединение с базой назначения под схемой " + Proportion.ArrSchemas[i] + " ==============\n");
+            //Connection d_connection;
+            //d_connection = connect(Proportion.D_Host, Proportion.D_Port, Proportion.D_DBName, Proportion.ArrSchemas[i], Proportion.ArrSchemasPass[i]);
 
 
                for (int j = 0; j < UserObjectList.size(); j++) {
                     System.out.println("Object Name:" + UserObjectList.get(j).Name);
                     System.out.println("Object DDL:" + UserObjectList.get(j).DDL);
-                    try {
-                        ExecuteDDL(d_connection, UserObjectList.get(j).DDL);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                   //ExecuteDDL(d_connection, UserObjectList.get(j).DDL);
+                   CMD.WriteFileTxt(Proportion.PathAddDir + Proportion.FilePath + "/" + Proportion.FileName,UserObjectList.get(j).DDL);
 
-                    System.out.println("\n-----------------------------------------------------------------------------\n");
+                   System.out.println("\n-----------------------------------------------------------------------------\n");
                 }
-            d_connection.close();
+            //d_connection.close();
+
+            System.out.println("\n============== Выполнение файла инсталятора для схемы " + Proportion.ArrSchemas[i] + " ==============");
+            CMD.ExecuteCMD("sqlplus " + Proportion.ArrSchemas[i] + "/" + Proportion.ArrSchemasPass[i] + "@" + Proportion.D_TNSName + " @" + Proportion.PathAddDir + Proportion.FilePath + "/" + Proportion.FileName);
+*/
         }
 
         /*for (int i = 0; i < Proportion.ArrSchemas.length; ++i) {
@@ -208,7 +211,7 @@ public class DBUTL {
     }
 
     // Удаление объекта
-    public static void DropObjects(Connection Connect, String ObjectName, String ObjectType) throws Exception {
+    public static void DropObjects(Connection Connect, String ObjectOwner, String ObjectName, String ObjectType) throws Exception {
 
         // Получение текста файла
         String FileTxt = CMD.GetFileTxt(Proportion.PathAddDir + "DBScripts/drop_object.sql");
@@ -216,9 +219,13 @@ public class DBUTL {
         CallableStatement cs = Connect.prepareCall(FileTxt);
 
         cs.setString(1, ObjectType);
-        cs.setString(2, ObjectName);
+        cs.setString(2, ObjectOwner);
+        cs.setString(3, ObjectName);
+        cs.registerOutParameter(4, OracleTypes.VARCHAR);
 
         cs.execute();
+
+        System.out.println("Error: " + cs.getString(4));
 
         cs.close();
     }

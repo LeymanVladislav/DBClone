@@ -13,11 +13,13 @@ public class Proportion
     private static double SOME_DOUBLE_VALUE;
     private static String parts;
 
+    /** [DB_SOURCE]*/
     public static String S_Host;
     public static String S_Port;
     public static String S_DBName;
     public static String S_TNSName;
 
+    /** [DB_DESTINATION]*/
     public static String D_Host;
     public static String D_Port;
     public static String D_DBName;
@@ -25,10 +27,14 @@ public class Proportion
     public static String D_UserDBA;
     public static String D_PassDBA;
 
-
+    /** [CLON_SETTINGS]*/
     public static String Schemas;
     public static String SchemasPass;
     public static String ObjectsType;
+
+    /** [INSTALL_DISTR]*/
+    public static String FilePath;
+    public static String FileName;
 
 
     public static String PathAddDir;
@@ -73,6 +79,11 @@ public class Proportion
             D_TNSName = props.getProperty("D_TNS_NAME");
             D_UserDBA = props.getProperty("D_USER_DBA");
             D_PassDBA = props.getProperty("D_PASS_DBA");
+
+            //[INSTALL_DISTR]
+            FilePath = props.getProperty("FILE_PATH");
+            FileName = props.getProperty("FILE_NAME");
+
 
             ObjectsType = props.getProperty("OBJECTS_TYPE");
 

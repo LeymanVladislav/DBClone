@@ -52,8 +52,7 @@ declare
     -- Объявление выгрузки типа TABLE
     v#hdl := sys.dbms_metadata.open(p$ObjectTypes);
   
-    if p$ObjectTypes in ('INDEX',
-                         'COMMENT') then
+    if p$ObjectTypes in ('COMMENT') then
       -- Установка фильтра
       sys.dbms_metadata.set_filter(v#hdl,
                                    'BASE_OBJECT_SCHEMA',
@@ -99,9 +98,9 @@ declare
                                              'DDL');
   
     -- Добавление разделителей для трансформации v_th2
-    /*sys.dbms_metadata.set_transform_param(v#th2,
+    sys.dbms_metadata.set_transform_param(v#th2,
                                           'SQLTERMINATOR',
-                                          true);*/
+                                          true);
   
     if p$ObjectTypes = 'TABLE' then
     

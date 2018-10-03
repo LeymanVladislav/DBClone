@@ -1,9 +1,6 @@
 package com;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -52,22 +49,6 @@ public class CMD {
         }
     }
 
-    /**
-     * Runs an SQL script
-     *
-     * @param FileName
-     *            - full path to script
-     * @param Params
-     *            - parameter value, delimiters = " "
-     */
-    public static void ExecuteDBScript(String User, String Pass, String TNSName, String FileName, String Params) {
-        String Command = "sqlplus " + User + "/" + Pass + "@" + TNSName + " @" + FileName + " " + Params;
-        ExecuteCMD(Command);
-    }
-    public static void ExecuteDBScript(String User, String Pass, String TNSName, String FileName) {
-        ExecuteDBScript(User, Pass, TNSName, FileName, null);
-    }
-
     public static String GetFileTxt(String File) {
 
         String st = "";
@@ -93,6 +74,26 @@ public class CMD {
         }
     }
 
+    public static void WriteFileTxt(String File, String Text) {
+
+        File file = new File(File);
+        file.getParentFile().mkdirs();
+
+        try(FileWriter writer = new FileWriter(file, true))
+        {
+            // запись всей строки
+            writer.write(Text);
+            // запись по символам
+            writer.append('\n');
+
+            writer.flush();
+        }
+        catch(IOException ex){
+
+            System.out.println(ex.getMessage());
+        }
+    }
+
     public static String CastStrArrToStr(String[] ArrStr) {
         String[] ArrStr_tmp = new String[ArrStr.length];
         for (int i = 0; i < ArrStr.length; i++) {
@@ -101,4 +102,21 @@ public class CMD {
         String st = String.join(",", ArrStr_tmp);
         return st;
     }
+
+    /**
+     * Runs an SQL script
+     *
+     * @param FileName
+     *            - full path to script
+     * @param Params
+     *            - parameter value, delimiters = " "
+     */
+    public static void ExecuteDBScript(String User, String Pass, String TNSName, String FileName, String Params) {
+        String Command = "sqlplus " + User + "/" + Pass + "@" + TNSName + " @" + FileName + " " + Params;
+        ExecuteCMD(Command);
+    }
+    public static void ExecuteDBScript(String User, String Pass, String TNSName, String FileName) {
+        ExecuteDBScript(User, Pass, TNSName, FileName, null);
+    }
+
 }

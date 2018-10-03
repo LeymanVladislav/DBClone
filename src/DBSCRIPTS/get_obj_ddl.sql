@@ -52,8 +52,7 @@ declare
     -- ќбъ€вление выгрузки типа TABLE
     v#hdl := sys.dbms_metadata.open(p$ObjectTypes);
   
-    if p$ObjectTypes in ('INDEX',
-                         'COMMENT') then
+    if p$ObjectTypes in ('COMMENT') then
       -- ”становка фильтра
       sys.dbms_metadata.set_filter(v#hdl,
                                    'BASE_OBJECT_SCHEMA',
