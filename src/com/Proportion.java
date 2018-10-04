@@ -30,11 +30,14 @@ public class Proportion
     /** [CLON_SETTINGS]*/
     public static String Schemas;
     public static String SchemasPass;
-    public static String ObjectsType;
+    public static String ObjectTypes;
 
     /** [INSTALL_DISTR]*/
-    public static String FilePath;
-    public static String FileName;
+    public static String InstallFilePath;
+    public static String InstallFileName;
+    public static String InstallFilePathSchema;
+    public static String InstallFileNameSchema;
+    public static String CharsetName;
 
 
     public static String PathAddDir;
@@ -81,11 +84,14 @@ public class Proportion
             D_PassDBA = props.getProperty("D_PASS_DBA");
 
             //[INSTALL_DISTR]
-            FilePath = props.getProperty("FILE_PATH");
-            FileName = props.getProperty("FILE_NAME");
+            InstallFilePath = props.getProperty("INSTALL_FILE_PATH");
+            InstallFileName = props.getProperty("INSTALL_FILE_NAME");
+            InstallFilePathSchema = props.getProperty("INSTALL_FILE_PATH_SCHEMA");
+            InstallFileNameSchema = props.getProperty("INSTALL_FILE_NAME_SCHEMA");
+            CharsetName = props.getProperty("CHARSET_NAME");
 
 
-            ObjectsType = props.getProperty("OBJECTS_TYPE");
+            ObjectTypes = props.getProperty("OBJECT_TYPES");
 
             // Читаем список через точку с запятой
             Schemas = props.getProperty("SCHEMAS");

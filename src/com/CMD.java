@@ -74,12 +74,14 @@ public class CMD {
         }
     }
 
-    public static void WriteFileTxt(String File, String Text) {
+    public static void WriteFileTxt(String File, String Text, Boolean Append, String CharsetName) throws FileNotFoundException {
 
         File file = new File(File);
         file.getParentFile().mkdirs();
 
-        try(FileWriter writer = new FileWriter(file, true))
+        FileOutputStream fileStream = new FileOutputStream(new File(File),Append);
+        ;
+        try(OutputStreamWriter writer = new OutputStreamWriter(fileStream, CharsetName))
         {
             // запись всей строки
             writer.write(Text);

@@ -8,20 +8,14 @@ declare
                              else
                               false
                            end; --true; --Включает создание констреинтов для таблиц
-  v$EnableIDX   boolean := case ?
-                             when 1 then
-                              true
-                             else
-                              false
-                           end; --true; --Включает создание индексов для таблиц
 
   --v$ObjDDL Clob;
   v$ObjDDLst varchar2(4000);
+  v$TMPStr varchar2(4000);
   function GetObjDLL(p$ObjName     in varchar2,
                      p$ObjNameNew  in varchar2 default null,
                      p$ObjectTypes in varchar2, -- TABLE,INDEX,COMMENT,PACKAGE
-                     p$EnableTCT   in boolean default false, -- для p$ObjectTypes = TABLE включает констреинты
-                     p$EnableIDX   in boolean default false -- для p$ObjectTypes = TABLE включает индексы
+                     p$EnableTCT   in boolean default false -- для p$ObjectTypes = TABLE включает констреинты
                      ) return varchar2 is
   
     v$ObjDDL     varchar2(4000);
@@ -166,7 +160,11 @@ declare
       v_obj$ddls := sys.dbms_metadata.fetch_ddl(v#hdl);
       exit when v_obj$ddls is null;
       for i in 1 .. cardinality(v_obj$ddls) loop
-        v$ObjDDL := v$ObjDDL || v_obj$ddls(i).ddlText;
+        v$TMPStr := v_obj$ddls(i).ddlText;
+        if p$ObjectTypes = 'COMMENT' then
+        v$TMPStr := replace(v$TMPStr,';',';' || chr(10));
+        end if;
+        v$ObjDDL := v$ObjDDL || v$TMPStr;
       end loop;
     end loop;
   
@@ -182,7 +180,6 @@ declare
 begin
   v$ObjDDLst := GetObjDLL(p$ObjName     => v$ObjName,
                           p$ObjectTypes => v$ObjectTypes,
-                          p$EnableTCT   => v$EnableTCT,
-                          p$EnableIDX   => v$EnableIDX);
+                          p$EnableTCT   => v$EnableTCT);
   ?          := v$ObjDDLst;
 end;
