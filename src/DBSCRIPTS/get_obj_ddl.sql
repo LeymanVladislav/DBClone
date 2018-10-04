@@ -10,8 +10,8 @@ declare
                            end; --true; --Включает создание констреинтов для таблиц
 
   --v$ObjDDL Clob;
-  v$ObjDDLst varchar2(4000);
-  v$TMPStr varchar2(4000);
+  v$ObjDDLst clob;
+  v$TMPStr clob;
   function GetObjDLL(p$ObjName     in varchar2,
                      p$ObjNameNew  in varchar2 default null,
                      p$ObjectTypes in varchar2, -- TABLE,INDEX,COMMENT,PACKAGE

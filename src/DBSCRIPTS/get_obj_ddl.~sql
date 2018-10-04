@@ -15,7 +15,7 @@ declare
   function GetObjDLL(p$ObjName     in varchar2,
                      p$ObjNameNew  in varchar2 default null,
                      p$ObjectTypes in varchar2, -- TABLE,INDEX,COMMENT,PACKAGE
-                     p$EnableTCT   in boolean default false, -- для p$ObjectTypes = TABLE включает констреинты
+                     p$EnableTCT   in boolean default false -- для p$ObjectTypes = TABLE включает констреинты
                      ) return varchar2 is
   
     v$ObjDDL     varchar2(4000);
