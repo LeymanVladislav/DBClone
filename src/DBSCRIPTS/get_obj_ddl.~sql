@@ -10,21 +10,23 @@ declare
                            end; --true; --Включает создание констреинтов для таблиц
 
   --v$ObjDDL Clob;
-  v$ObjDDLst varchar2(4000);
-  v$TMPStr varchar2(4000);
+  v$ObjDDLst clob;
+  v$TMPStr   clob;
   function GetObjDLL(p$ObjName     in varchar2,
                      p$ObjNameNew  in varchar2 default null,
                      p$ObjectTypes in varchar2, -- TABLE,INDEX,COMMENT,PACKAGE
                      p$EnableTCT   in boolean default false -- для p$ObjectTypes = TABLE включает констреинты
                      ) return varchar2 is
   
-    v$ObjDDL     varchar2(4000);
-    v$ObjDDL_tmp varchar2(4000);
-    v_obj$ddls   sys.ku$_ddls;
-    v#hdl        pls_integer;
-    v#th1        pls_integer;
-    v#th2        pls_integer;
+    v$ObjectTypes varchar2(100;
+    v$ObjDDL      varchar2(4000);
+    v$ObjDDL_tmp  varchar2(4000);
+    v_obj$ddls    sys.ku$_ddls;
+    v#hdl         pls_integer;
+    v#th1         pls_integer;
+    v#th2         pls_integer;
     no_inmemory_ex exception;
+  
     pragma exception_init(no_inmemory_ex,
                           -31600);
   
@@ -43,10 +45,13 @@ declare
     end print_lob;
   
   begin
-    -- Объявление выгрузки типа TABLE
-    v#hdl := sys.dbms_metadata.open(p$ObjectTypes);
+    -- Обработка типа
+    v$ObjectTypes := case p$ObjectTypes when 'JOB' then 'PROCOBJ' else p$ObjectTypes end;
   
-    if p$ObjectTypes in ('COMMENT') then
+    -- Объявление выгрузки типа TABLE
+    v#hdl := sys.dbms_metadata.open(v$ObjectTypes);
+  
+    if v$ObjectTypes in ('COMMENT') then
       -- Установка фильтра
       sys.dbms_metadata.set_filter(v#hdl,
                                    'BASE_OBJECT_SCHEMA',
@@ -64,7 +69,7 @@ declare
                                    p$ObjName);
     end if;
   
-    if p$ObjectTypes = 'TABLE'
+    if v$ObjectTypes = 'TABLE'
        and p$ObjNameNew is not null then
       -- Объявление трансформации описания таблицы
       v#th1 := sys.dbms_metadata.add_transform(v#hdl,
@@ -96,7 +101,7 @@ declare
                                           'SQLTERMINATOR',
                                           true);
   
-    if p$ObjectTypes = 'TABLE' then
+    if v$ObjectTypes = 'TABLE' then
     
       if p$EnableTCT then
         -- Создание констреинтов отдельной командой для трансформации v#th2                                               
@@ -143,7 +148,7 @@ declare
     
     end if;
   
-    if p$ObjectTypes in ('TABLE',
+    if v$ObjectTypes in ('TABLE',
                          'INDEX') then
       -- Включение секционирования для трансформации v#th2
       sys.dbms_metadata.set_transform_param(v#th2,
@@ -161,8 +166,10 @@ declare
       exit when v_obj$ddls is null;
       for i in 1 .. cardinality(v_obj$ddls) loop
         v$TMPStr := v_obj$ddls(i).ddlText;
-        if p$ObjectTypes = 'COMMENT' then
-        v$TMPStr := replace(v$TMPStr,';',';' || chr(10));
+        if v$ObjectTypes = 'COMMENT' then
+          v$TMPStr := replace(v$TMPStr,
+                              ';',
+                              ';' || chr(10));
         end if;
         v$ObjDDL := v$ObjDDL || v$TMPStr;
       end loop;

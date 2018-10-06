@@ -3,8 +3,10 @@ package db.oracle;
 import com.CMD;
 import com.Proportion;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Install {
@@ -91,7 +93,7 @@ public class Install {
     /**
      * Создание файла-инсталятора объектов для схемы
      * */
-    public static void CreateInstallForSchema(Connection Connect, String Schema,ArrayList<DBUTL.UserObjectType> UserObjectList, String SchemaFilePath) throws Exception {
+    public static void CreateInstallForSchema(Connection Connect, String Schema,ArrayList<DBUTL.UserObjectType> UserObjectList, String SchemaFilePath) throws FileNotFoundException {
 
 
         System.out.println("\n============== Получаем список объкетов схемы " + Schema + " БД источника ==============\n");
@@ -99,9 +101,15 @@ public class Install {
             for (int j = 0; j < UserObjectList.size(); j++) {
                 System.out.println(UserObjectList.get(j).Name + " " + UserObjectList.get(j).Type);
 
-                String ObjectsDDL;
+                String ObjectsDDL = null;
                 // Получаем DDL объекта
-                ObjectsDDL = DBUTL.GetObjectsDDL(Connect, Schema, UserObjectList.get(j).Name, UserObjectList.get(j).Type, 0);
+                try {
+                    ObjectsDDL = DBUTL.GetObjectsDDL(Connect, Schema, UserObjectList.get(j).Name, UserObjectList.get(j).Type, 0);
+                } catch (Exception e) {
+                    System.out.println("Error DBUTL.GetObjectsDDL:");
+                    e.printStackTrace();
+                }
+
                 // Записываем DDL объекта
                 UserObjectList.get(j).DDL = ObjectsDDL;
             }
