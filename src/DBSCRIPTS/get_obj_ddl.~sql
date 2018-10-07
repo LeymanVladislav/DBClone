@@ -18,9 +18,8 @@ declare
                      p$EnableTCT   in boolean default false -- для p$ObjectTypes = TABLE включает констреинты
                      ) return varchar2 is
   
-    v$ObjectTypes varchar2(100;
-    v$ObjDDL      varchar2(4000);
-    v$ObjDDL_tmp  varchar2(4000);
+    v$ObjectTypes varchar2(100);
+    v$ObjDDL      clob;
     v_obj$ddls    sys.ku$_ddls;
     v#hdl         pls_integer;
     v#th1         pls_integer;

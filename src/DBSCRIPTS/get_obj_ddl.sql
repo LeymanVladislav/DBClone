@@ -19,8 +19,7 @@ declare
                      ) return varchar2 is
   
     v$ObjectTypes varchar2(100);
-    v$ObjDDL      varchar2(4000);
-    v$ObjDDL_tmp  varchar2(4000);
+    v$ObjDDL      clob;
     v_obj$ddls    sys.ku$_ddls;
     v#hdl         pls_integer;
     v#th1         pls_integer;
@@ -46,7 +45,12 @@ declare
   
   begin
     -- Обработка типа
-    v$ObjectTypes := case p$ObjectTypes when 'JOB' then 'PROCOBJ' else p$ObjectTypes end;
+    v$ObjectTypes := case p$ObjectTypes
+                       when 'JOB' then
+                        'PROCOBJ'
+                       else
+                        p$ObjectTypes
+                     end;
   
     -- Объявление выгрузки типа TABLE
     v#hdl := sys.dbms_metadata.open(v$ObjectTypes);

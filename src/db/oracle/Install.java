@@ -49,7 +49,7 @@ public class Install {
         }
 
         // Запуск инсталятора
-        ExecuteInstallFile(Proportion.D_UserDBA,Proportion.D_PassDBA,FilePath);
+        //ExecuteInstallFile(Proportion.D_UserDBA,Proportion.D_PassDBA,FilePath);
 
     }
 
@@ -104,7 +104,7 @@ public class Install {
                 String ObjectsDDL = null;
                 // Получаем DDL объекта
                 try {
-                    ObjectsDDL = DBUTL.GetObjectsDDL(Connect, Schema, UserObjectList.get(j).Name, UserObjectList.get(j).Type, 0);
+                    ObjectsDDL = DBUTL.GetObjectsDDL(Connect, Schema, UserObjectList.get(j).Name, UserObjectList.get(j).Type, 1);
                 } catch (Exception e) {
                     System.out.println("Error DBUTL.GetObjectsDDL:");
                     e.printStackTrace();
