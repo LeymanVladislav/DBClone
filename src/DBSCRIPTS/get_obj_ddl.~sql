@@ -45,7 +45,12 @@ declare
   
   begin
     -- ќбработка типа
-    v$ObjectTypes := case p$ObjectTypes when 'JOB' then 'PROCOBJ' else p$ObjectTypes end;
+    v$ObjectTypes := case p$ObjectTypes
+                       when 'JOB' then
+                        'PROCOBJ'
+                       else
+                        p$ObjectTypes
+                     end;
   
     -- ќбъ€вление выгрузки типа TABLE
     v#hdl := sys.dbms_metadata.open(v$ObjectTypes);
@@ -60,9 +65,12 @@ declare
                                    p$ObjName);
     else
       -- ”становка фильтра
+      if v$ObjectTypes not in ('USER') then
       sys.dbms_metadata.set_filter(v#hdl,
                                    'SCHEMA',
                                    v$owner);
+      end if;
+                                   
       sys.dbms_metadata.set_filter(v#hdl,
                                    'NAME',
                                    p$ObjName);

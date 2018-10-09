@@ -65,9 +65,12 @@ declare
                                    p$ObjName);
     else
       -- Установка фильтра
+      if v$ObjectTypes not in ('USER') then
       sys.dbms_metadata.set_filter(v#hdl,
                                    'SCHEMA',
                                    v$owner);
+      end if;
+                                   
       sys.dbms_metadata.set_filter(v#hdl,
                                    'NAME',
                                    p$ObjName);
@@ -103,6 +106,10 @@ declare
     -- Добавление разделителей для трансформации v_th2
     sys.dbms_metadata.set_transform_param(v#th2,
                                           'SQLTERMINATOR',
+                                          true);
+                                          
+    sys.dbms_metadata.set_transform_param(v#th2,
+                                          'PRETTY',
                                           true);
   
     if v$ObjectTypes = 'TABLE' then
